@@ -4,8 +4,42 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home</title>
+    <link rel="stylesheet" href="/statics/css/index.css">
 </head>
 <body>
-    <h1>Hello world</h1>
+    <header>
+        <h1><a href="/">TypeCS</a></h1>
+        <div>personalized assistant for speed coding</div>
+        <div id="login-button">login</div>
+    </header>
+    <main>
+        <div class="left" id="main-left">
+            <section id="language-box">
+                <h3 class="box-name">Select Language</h3>
+                <select name="language-select" id="language-select">
+                    <option value="C++">C++</option>
+                    <option value="Python">Python</option>
+                    <option value="Java">Java</option>
+                </select>
+            </section>
+            <section id="timer-box">
+                <h3 class="box-name">Timer</h3>
+                <div id="timer-time">30</div>
+            </section>
+            <section id="document-box">
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse ullamcorper sem sed dui dapibus, vel ullamcorper justo vulputate. Mauris pulvinar orci metus, sed imperdiet lacus accumsan quis. Vivamus tempus bibendum faucibus. Pellentesque quis bibendum lacus. Integer quam felis, convallis eget venenatis sed, semper vel lorem. Nulla gravida, ligula vitae dapibus dapibus, elit metus porttitor erat, et maximus turpis tellus nec lacus. In neque risus, consequat at mollis ut, vulputate nec magna. Vivamus et nisl ut lorem condimentum porta ac id lacus. Suspendisse potenti. Duis libero leo, sollicitudin quis sollicitudin quis, ultricies in erat. Phasellus id dolor et lorem semper tincidunt. Praesent sed nibh quam.
+            </section>
+            <section id="type-box">
+                <div id="type-bar" contenteditable="true"></div>
+                <div id="type-explanation">Type here to start</div>
+            </section>
+        </div>
+        <div class="right" id="main-right">
+            <!-- REMOVE THESE START -->
+            <div>Placeholder for previous runs here!</div>
+            <div id="remove-me"></div>
+            <!-- REMOVE THESE END -->
+        </div>
+    </main>
 </body>
 </html>
