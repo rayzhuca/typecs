@@ -5,42 +5,83 @@ const languageSelect = <HTMLSelectElement>(
   document.getElementById("language-select")
 );
 
+const runDuration = 5;
 let in_run: boolean = false;
-let run_time: number = 30;
+let run_time: number = runDuration;
 let docStr: string = "";
 let docStrSeparated: string[] = [];
 let wordIndex: number = 0;
+let runIntervalId: number = 0;
+let runStartTimeStamp: number = 0;
+let timetable: Map<number, string> = new Map();
 
-typeBar.addEventListener("input", () => {
+typeBar.addEventListener("input", (e) => {
   if (in_run) {
     if (typeBar.textContent.trim() == docStrSeparated[wordIndex]) {
       typeBar.textContent = "";
       ++wordIndex;
-      highlight();
       if (wordIndex >= docStrSeparated.length) {
         fetchNewDoc(languageSelect.value);
       }
+      highlight();
     }
   } else {
-    in_run = true;
-    startRun(languageSelect.value);
+    startRun(languageSelect.value, e.timeStamp);
   }
 });
 
-function startRun(lang: string) {
-  const interval_id = setInterval(() => {
+typeBar.addEventListener("keydown", (e) => {
+  timetable.set((e.timeStamp - runStartTimeStamp) / 1000, e.key);
+  if ((e as any).key == "Enter") {
+    e.preventDefault();
+  }
+});
+
+languageSelect.addEventListener("change", () => {
+  endRun(languageSelect.value, false);
+});
+
+function startRun(lang: string, time: number) {
+  in_run = true;
+  runStartTimeStamp = time;
+  timetable = new Map();
+  runIntervalId = setInterval(() => {
     --run_time;
     timerTime.textContent = String(run_time);
     if (run_time == 0) {
-      clearInterval(interval_id);
-      in_run = false;
-      run_time = 30;
-      timerTime.textContent = String(run_time);
-      typeBar.textContent = "";
-      fetchNewDoc(lang);
+      endRun(lang, true);
     }
   }, 1000);
   highlight();
+}
+
+function endRun(lang: string, isLogged: boolean) {
+  if (runIntervalId != 0) clearInterval(runIntervalId);
+  in_run = false;
+  run_time = runDuration;
+  timerTime.textContent = String(run_time);
+  typeBar.textContent = "";
+  typeBar.contentEditable = "false";
+  fetchNewDoc(lang);
+  if (isLogged) {
+    logRun();
+    console.log("ran log run");
+  }
+  console.log("before reset");
+  timetable = new Map();
+  setTimeout(() => {
+    typeBar.contentEditable = "true";
+  }, 1000);
+}
+
+function logRun() {
+  console.log(timetable);
+  console.log(JSON.stringify(Array.from(timetable.entries())));
+  fetch("/logrun", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(Array.from(timetable.entries())),
+  });
 }
 
 async function fetchNewDoc(lang: string) {
@@ -69,6 +110,7 @@ function highlight() {
       --prevCount;
       if (prevCount == 0) {
         targetStart = i;
+        break;
       }
     }
     // skip to the next word
@@ -89,4 +131,8 @@ function highlight() {
   documentText.append(document.createTextNode(docStr.slice(targetEnd)));
 }
 
-fetchNewDoc(languageSelect.value);
+endRun(languageSelect.value, false);
+
+setInterval(() => {
+  console.log(timetable);
+}, 1000);

@@ -95,7 +95,6 @@ def get_doc():
         return "invalid language"
     return send_file(f"./statics/docs/{lang}/{n}.txt")
 
-
 @app.route("/register", methods=["GET", "POST"])
 def page_register():
     if request.method == "POST":
@@ -125,6 +124,17 @@ def page_login():
 
     return render_template("login.html")
 
+
+@app.route("/logrun", methods=["POST"])
+def process_log():
+    timetable = request.get_json()
+    # TEMPORARY/JUST FOR TESTING
+    cps = [0] * 30 # characters per second
+    for [t, c] in timetable:
+        cps[min(int(t), 29)] += 1
+    wpm = [(60 * x) / 4.7 for x in cps] #4.7 is the average length of a word
+    # user_insert_run() # UNCOMMMENT WHEN READY
+    return "Success"
 
 if __name__ == "__main__":
     with app.app_context():
