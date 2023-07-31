@@ -1,0 +1,32 @@
+import itertools
+
+def calculate_distance(city1, city2):
+    return ((city1[0] - city2[0])**2 + (city1[1] - city2[1])**2) ** 0.5
+
+def tsp_brute_force(cities):
+    shortest_path = None
+    shortest_distance = float('inf')
+    num_cities = len(cities)
+
+    for permutation in itertools.permutations(range(1, num_cities)):
+        current_distance = 0
+        current_city = 0
+
+        for next_city in permutation:
+            current_distance += calculate_distance(cities[current_city], cities[next_city])
+            current_city = next_city
+
+        current_distance += calculate_distance(cities[current_city], cities[0])
+
+        if current_distance < shortest_distance:
+            shortest_distance = current_distance
+            shortest_path = (0,) + permutation
+
+    return shortest_path, shortest_distance
+
+# Example: TSP with 4 cities represented as (x, y) coordinates
+cities = [(0, 0), (1, 2), (3, 5), (7, 8)]
+
+shortest_path, shortest_distance = tsp_brute_force(cities)
+print("Shortest Path:", shortest_path)
+print("Shortest Distance:", shortest_distance)

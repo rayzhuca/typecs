@@ -1,0 +1,49 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
+// Function to check if a number is prime
+bool isPrime(int number) {
+    if (number <= 1) {
+        return false;
+    }
+
+    for (int i = 2; i * i <= number; i++) {
+        if (number % i == 0) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+int main() {
+    std::vector<int> numbers = {2, 7, 15, 20, 37, 42, 53, 64, 71, 89};
+
+    // Count and display the number of prime numbers in the vector
+    int primeCount = 0;
+    for (int num : numbers) {
+        if (isPrime(num)) {
+            primeCount++;
+        }
+    }
+
+    std::cout << "Original Numbers: ";
+    for (int num : numbers) {
+        std::cout << num << " ";
+    }
+    std::cout << std::endl;
+
+    std::cout << "Number of Prime Numbers: " << primeCount << std::endl;
+
+    // Remove non-prime numbers from the vector
+    numbers.erase(std::remove_if(numbers.begin(), numbers.end(), [](int num) { return !isPrime(num); }), numbers.end());
+
+    std::cout << "Prime Numbers: ";
+    for (int num : numbers) {
+        std::cout << num << " ";
+    }
+    std::cout << std::endl;
+
+    return 0;
+}

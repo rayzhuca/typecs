@@ -1,0 +1,29 @@
+import numpy as np
+from itertools import permutations
+
+def tsp_genetic_algorithm(cities, num_generations=1000, population_size=100):
+    def total_distance(path):
+        return sum(np.linalg.norm(cities[path[i]] - cities[path[i + 1]]) for i in range(len(path) - 1))
+
+    population = np.array(list(permutations(range(len(cities)))))
+
+    for generation in range(num_generations):
+        fitness = np.array([1 / total_distance(path) for path in population])
+        parents = np.random.choice(range(population_size), size=population_size // 2, p=fitness / fitness.sum())
+
+        children = []
+        for parent1, parent2 in zip(parents[::2], parents[1::2]):
+            crossover_point = np.random.randint(1, len(cities))
+            child = np.concatenate((population[parent1][:crossover_point],
+                                    population[parent2][crossover_point:]))
+            children.append(child)
+
+        population[parents] = children
+
+    best_path = population[np.argmax([1 / total_distance(path) for path in population])]
+    return best_path, total_distance(best_path)
+
+cities = np.array([[0, 0], [1, 2], [3, 5], [7, 8], [4, 6]])
+best_path, shortest_distance = tsp_genetic_algorithm(cities)
+print("Shortest Path:", best_path)
+print("Shortest Distance:", shortest_distance)

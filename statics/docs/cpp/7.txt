@@ -1,0 +1,133 @@
+#include <iostream>
+#include <random>
+
+template<typename T>
+struct TreapNode {
+    T key;
+    int priority;
+    TreapNode* left;
+    TreapNode* right;
+
+    TreapNode(T key) : key(key), priority(rand()), left(nullptr), right(nullptr) {}
+};
+
+template<typename T>
+class Treap {
+private:
+    TreapNode<T>* root;
+
+    // Function to perform right rotation at the given node
+    TreapNode<T>* rotateRight(TreapNode<T>* node) {
+        TreapNode<T>* newRoot = node->left;
+        node->left = newRoot->right;
+        newRoot->right = node;
+        return newRoot;
+    }
+
+    // Function to perform left rotation at the given node
+    TreapNode<T>* rotateLeft(TreapNode<T>* node) {
+        TreapNode<T>* newRoot = node->right;
+        node->right = newRoot->left;
+        newRoot->left = node;
+        return newRoot;
+    }
+
+    // Function to insert a key with a given priority into the treap
+    TreapNode<T>* insertUtil(TreapNode<T>* root, T key, int priority) {
+        if (!root) {
+            return new TreapNode<T>(key);
+        }
+
+        if (key < root->key) {
+            root->left = insertUtil(root->left, key, priority);
+            if (root->left->priority > root->priority) {
+                root = rotateRight(root);
+            }
+        } else {
+            root->right = insertUtil(root->right, key, priority);
+            if (root->right->priority > root->priority) {
+                root = rotateLeft(root);
+            }
+        }
+
+        return root;
+    }
+
+    // Function to delete a key from the treap
+    TreapNode<T>* deleteUtil(TreapNode<T>* root, T key) {
+        if (!root) {
+            return root;
+        }
+
+        if (key < root->key) {
+            root->left = deleteUtil(root->left, key);
+        } else if (key > root->key) {
+            root->right = deleteUtil(root->right, key);
+        } else {
+            if (!root->left) {
+                TreapNode<T>* temp = root->right;
+                delete root;
+                root = temp;
+            } else if (!root->right) {
+                TreapNode<T>* temp = root->left;
+                delete root;
+                root = temp;
+            } else {
+                if (root->left->priority > root->right->priority) {
+                    root = rotateRight(root);
+                    root->right = deleteUtil(root->right, key);
+                } else {
+                    root = rotateLeft(root);
+                    root->left = deleteUtil(root->left, key);
+                }
+            }
+        }
+
+        return root;
+    }
+
+    // Function to perform inorder traversal and print the treap
+    void inorderUtil(TreapNode<T>* root) {
+        if (!root) {
+            return;
+        }
+
+        inorderUtil(root->left);
+        std::cout << root->key << " ";
+        inorderUtil(root->right);
+    }
+
+public:
+    Treap() : root(nullptr) {}
+
+    // Function to insert a key into the treap
+    void insert(T key) {
+        int priority = rand();
+        root = insertUtil(root, key, priority);
+    }
+
+    // Function to delete a key from the treap
+    void remove(T key) {
+        root = deleteUtil(root, key);
+    }
+
+    // Function to check if a key exists in the treap
+    bool search(T key) {
+        TreapNode<T>* current = root;
+        while (current) {
+            if (current->key == key) {
+                return true;
+            } else if (key < current->key) {
+                current = current->left;
+            } else {
+                current = current->right;
+            }
+        }
+        return false;
+    }
+
+    // Function to print the treap elements in ascending order
+    void inorder() {
+        inorderUtil(root);
+    }
+};

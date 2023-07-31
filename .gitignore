@@ -4,3 +4,7 @@ __pycache__/
 
 .DS_Store
 .env
+
+node_modules
+
+statics/js/index.js

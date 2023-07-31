@@ -1,0 +1,77 @@
+#include <vector>
+
+template <typename T>
+class SegmentTree {
+private:
+    std::vector<T> tree;
+    int n;
+
+    // Helper function to build the segment tree
+    void buildTree(const std::vector<T>& arr, int node, int start, int end) {
+        if (start == end) {
+            tree[node] = arr[start];
+        } else {
+            int mid = (start + end) / 2;
+            buildTree(arr, 2 * node, start, mid);
+            buildTree(arr, 2 * node + 1, mid + 1, end);
+            tree[node] = combine(tree[2 * node], tree[2 * node + 1]);
+        }
+    }
+
+    // Helper function to update a value in the segment tree
+    void updateValue(int node, int start, int end, int idx, T newValue) {
+        if (start == end) {
+            tree[node] = newValue;
+        } else {
+            int mid = (start + end) / 2;
+            if (idx <= mid) {
+                updateValue(2 * node, start, mid, idx, newValue);
+            } else {
+                updateValue(2 * node + 1, mid + 1, end, idx, newValue);
+            }
+            tree[node] = combine(tree[2 * node], tree[2 * node + 1]);
+        }
+    }
+
+    // Helper function to query the segment tree for a range
+    T query(int node, int start, int end, int left, int right) {
+        if (start > right || end < left) {
+            return defaultValue(); // Out of range
+        }
+        if (start >= left && end <= right) {
+            return tree[node]; // Completely inside the query range
+        }
+
+        int mid = (start + end) / 2;
+        T leftChild = query(2 * node, start, mid, left, right);
+        T rightChild = query(2 * node + 1, mid + 1, end, left, right);
+        return combine(leftChild, rightChild);
+    }
+
+public:
+    // Constructor to build the segment tree from an input array
+    SegmentTree(const std::vector<T>& arr) {
+        n = arr.size();
+        tree.resize(4 * n);
+        buildTree(arr, 1, 0, n - 1);
+    }
+
+    // Function to update a value in the segment tree
+    void update(int idx, T newValue) {
+        updateValue(1, 0, n - 1, idx, newValue);
+    }
+
+    // Function to query the segment tree for a range
+    T query(int left, int right) {
+        return query(1, 0, n - 1, left, right);
+    }
+
+    // Override these functions for different use cases
+    T defaultValue() {
+        return 0; // Change this based on the use case
+    }
+
+    T combine(T a, T b) {
+        return a + b; // Change this based on the operation you want to perform (e.g., sum, min, max, etc.)
+    }
+};

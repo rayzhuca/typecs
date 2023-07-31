@@ -1,0 +1,40 @@
+#include <vector>
+
+class BinaryIndexedTree {
+private:
+    std::vector<int> BIT;
+    int size;
+
+public:
+    BinaryIndexedTree(int n) {
+        size = n + 1;
+        BIT.resize(size, 0);
+    }
+
+    // Function to update the BIT at index 'idx' with 'value'
+    void update(int idx, int value) {
+        while (idx < size) {
+            BIT[idx] += value;
+            idx += idx & -idx; // Move to the parent node
+        }
+    }
+
+    // Function to get the prefix sum up to index 'idx'
+    int query(int idx) {
+        int sum = 0;
+        while (idx > 0) {
+            sum += BIT[idx];
+            idx -= idx & -idx; // Move to the previous node in the BIT
+        }
+        return sum;
+    }
+
+    // Function to get the sum of elements in the range [left, right]
+    int rangeQuery(int left, int right) {
+        if (left > right || left < 1 || right >= size - 1) {
+            return 0; // Invalid range or indices out of bounds
+        }
+
+        return query(right) - query(left - 1);
+    }
+};

@@ -1,0 +1,76 @@
+#include <iostream>
+#include <vector>
+
+class Matrix {
+private:
+    std::vector<std::vector<int>> data;
+    int rows;
+    int cols;
+
+public:
+    Matrix(int rows, int cols) : rows(rows), cols(cols) {
+        data.resize(rows, std::vector<int>(cols, 0));
+    }
+
+    Matrix operator*(const Matrix& other) {
+        if (cols != other.rows) {
+            throw std::invalid_argument("Matrix dimensions are not compatible for multiplication.");
+        }
+
+        Matrix result(rows, other.cols);
+
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < other.cols; j++) {
+                for (int k = 0; k < cols; k++) {
+                    result.data[i][j] += data[i][k] * other.data[k][j];
+                }
+            }
+        }
+
+        return result;
+    }
+
+    void print() const {
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                std::cout << data[i][j] << " ";
+            }
+            std::cout << std::endl;
+        }
+    }
+
+    // Helper function to set the value of an element in the matrix
+    void setElement(int row, int col, int value) {
+        if (row >= 0 && row < rows && col >= 0 && col < cols) {
+            data[row][col] = value;
+        } else {
+            throw std::out_of_range("Row or column index out of range.");
+        }
+    }
+};
+
+int main() {
+    // Create two matrices and set their elements
+    Matrix matrix1(3, 2);
+    matrix1.setElement(0, 0, 1);
+    matrix1.setElement(0, 1, 2);
+    matrix1.setElement(1, 0, 3);
+    matrix1.setElement(1, 1, 4);
+    matrix1.setElement(2, 0, 5);
+    matrix1.setElement(2, 1, 6);
+
+    Matrix matrix2(2, 3);
+    matrix2.setElement(0, 0, 7);
+    matrix2.setElement(0, 1, 8);
+    matrix2.setElement(0, 2, 9);
+    matrix2.setElement(1, 0, 10);
+    matrix2.setElement(1, 1, 11);
+    matrix2.setElement(1, 2, 12);
+
+    // Perform matrix multiplication and print the result
+    Matrix result = matrix1 * matrix2;
+    std::cout << "Result of Matrix Multiplication:" << std::endl;
+    result.print();
+
+    return 0;
+}

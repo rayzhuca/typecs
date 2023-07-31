@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, session
+from flask import Flask, render_template, request, request, send_file
 from flask_sqlalchemy import SQLAlchemy
 
 import os
@@ -84,8 +84,17 @@ def user_insert_run(user, wpm):
 
 
 @app.route("/")
-def hello():
+def page_index():
     return render_template("index.html")
+
+@app.route("/doc")
+def get_doc():
+    lang = request.args.get('lang')
+    n = random.randint(1, 10)
+    if lang not in {"cpp", "java", "python"}:
+        return "invalid language"
+    return send_file(f"./statics/docs/{lang}/{n}.txt")
+
 
 @app.route("/register", methods=["GET", "POST"])
 def page_register():
