@@ -13,11 +13,16 @@ let docStrSeparated: string[] = [];
 let wordIndex: number = 0;
 let runIntervalId: number = 0;
 let runStartTimeStamp: number = 0;
-let timetable: Map<number, string> = new Map();
+interface Timestamp {
+  key: string;
+  correct: boolean;
+}
+let timetable: Map<number, Timestamp> = new Map();
 
 typeBar.addEventListener("input", (e) => {
   if (in_run) {
-    if (typeBar.textContent.trim() == docStrSeparated[wordIndex]) {
+    const text = typeBar.textContent.trim();
+    if (text == docStrSeparated[wordIndex]) {
       typeBar.textContent = "";
       ++wordIndex;
       if (wordIndex >= docStrSeparated.length) {
@@ -30,8 +35,24 @@ typeBar.addEventListener("input", (e) => {
   }
 });
 
+typeBar.addEventListener("keyup", (e) => {
+  if (in_run) {
+    const text = typeBar.textContent.trim(),
+      correct = docStrSeparated[wordIndex].startsWith(text);
+    console.log(
+      docStrSeparated[wordIndex],
+      text,
+      docStrSeparated[wordIndex].startsWith(text)
+    );
+    timetable.set((e.timeStamp - runStartTimeStamp) / 1000, {
+      key: e.key,
+      correct,
+    });
+    typeBar.classList.toggle("incorrect", !correct);
+  }
+});
+
 typeBar.addEventListener("keydown", (e) => {
-  timetable.set((e.timeStamp - runStartTimeStamp) / 1000, e.key);
   if ((e as any).key == "Enter") {
     e.preventDefault();
   }
@@ -62,6 +83,7 @@ function endRun(lang: string, isLogged: boolean) {
   timerTime.textContent = String(run_time);
   typeBar.textContent = "";
   typeBar.contentEditable = "false";
+  typeBar.classList.remove("incorrect");
   fetchNewDoc(lang);
   if (isLogged) {
     logRun();

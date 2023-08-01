@@ -127,12 +127,13 @@ def page_login():
 
 @app.route("/logrun", methods=["POST"])
 def process_log():
-    timetable = request.get_json()
-    # TEMPORARY/JUST FOR TESTING
+    timetable = request.get_json() # [t, {key: 'a', correct: True/False}]
     cps = [0] * 30 # characters per second
-    for [t, c] in timetable:
-        cps[min(int(t), 29)] += 1
+    for [t, stamp] in timetable:
+        if stamp["correct"]:
+            cps[min(int(t), 29)] += 1
     wpm = [(60 * x) / 4.7 for x in cps] #4.7 is the average length of a word
+    print(wpm)
     # user_insert_run() # UNCOMMMENT WHEN READY
     return "Success"
 

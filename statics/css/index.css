@@ -118,8 +118,17 @@ main {
 #type-bar {
     width: 50%;
     padding: 1em;
-    border: solid 1px black;
+    border: solid 2px black;
     border-radius: 10px;
+    word-break: break-all;
+}
+
+#type-bar:focus {
+    outline: none;
+}
+
+#type-bar.incorrect {
+    border: solid 2px red;
 }
 
 #type-explanation {
