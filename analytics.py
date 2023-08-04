@@ -47,5 +47,3 @@ def get_keyboard_plot(timetable):
     plt.axis('off')
     plt.show()
     # plt.savefig("test.png", bbox_inches='tight')
-    
-get_keyboard_plot()
