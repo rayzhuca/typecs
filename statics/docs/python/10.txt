@@ -1,0 +1,22 @@
+import time
+
+def cool_runtime_demo(num_elements):
+    start_time = time.time()
+
+    # Create a dictionary and insert elements
+    my_dict = {}
+    for i in range(num_elements):
+        my_dict[i] = i
+
+    # Perform a lookup operation
+    lookup_key = num_elements // 2
+    _ = my_dict.get(lookup_key)
+
+    end_time = time.time()
+    elapsed_time = end_time - start_time
+
+    print(f"Dictionary size: {len(my_dict)}")
+    print(f"Lookup time for key {lookup_key}: {elapsed_time:.8f} seconds")
+
+# Test with 1 million elements
+cool_runtime_demo(1000000)

@@ -1,0 +1,13 @@
+import tensorflow as tf
+
+input_data = tf.constant([[1.0, 2.0]])
+weights = tf.Variable([[0.1], [0.2]])
+bias = tf.Variable([0.5])
+
+output = tf.matmul(input_data, weights) + bias
+
+with tf.compat.v1.Session() as sess:
+    sess.run(tf.compat.v1.global_variables_initializer())
+    result = sess.run(output)
+    print("Neural Network Output:")
+    print(result)

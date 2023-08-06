@@ -1,0 +1,13 @@
+def custom_decorator(func):
+    def wrapper(*args, **kwargs):
+        print("Before the function is called.")
+        result = func(*args, **kwargs)
+        print("After the function is called.")
+        return result
+    return wrapper
+
+@custom_decorator
+def example_function(x):
+    return x * 2
+
+print(example_function(5))

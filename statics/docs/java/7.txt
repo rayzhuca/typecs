@@ -1,0 +1,18 @@
+public class CharacterCount {
+    public static int countCharacters(String str, char target) {
+        int count = 0;
+        for (char ch : str.toCharArray()) {
+            if (ch == target) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    public static void main(String[] args) {
+        String sentence = "Programming is fun and challenging!";
+        char targetChar = 'g';
+        int occurrences = countCharacters(sentence, targetChar);
+        System.out.println("The character '" + targetChar + "' appears " + occurrences + " times in the string.");
+    }
+}

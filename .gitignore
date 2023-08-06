@@ -1,0 +1,11 @@
+*.pyc
+*.pyo
+__pycache__/
+flask_session/
+
+.DS_Store
+.env
+
+node_modules
+
+statics/js/index.js

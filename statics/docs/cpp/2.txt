@@ -1,0 +1,33 @@
+#include <iostream>
+#include <string>
+#include <map>
+
+int main() {
+    std::map<std::string, int> ageMap;
+
+    // Add some random names and ages to the map
+    ageMap["Alice"] = 25;
+    ageMap["Bob"] = 30;
+    ageMap["Charlie"] = 28;
+    ageMap["Diana"] = 22;
+    ageMap["Eva"] = 29;
+
+    // Display the names and ages
+    std::cout << "Name\tAge" << std::endl;
+    for (const auto& entry : ageMap) {
+        std::cout << entry.first << "\t" << entry.second << std::endl;
+    }
+
+    // Check if a name exists in the map and display the age
+    std::string searchName;
+    std::cout << "\nEnter a name to check their age: ";
+    std::cin >> searchName;
+
+    if (ageMap.find(searchName) != ageMap.end()) {
+        std::cout << "Age of " << searchName << " is " << ageMap[searchName] << std::endl;
+    } else {
+        std::cout << searchName << " not found in the map." << std::endl;
+    }
+
+    return 0;
+}

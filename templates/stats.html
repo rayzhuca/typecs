@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Statistics</title>
+    <link rel="stylesheet" href="/statics/css/index.css">
+</head>
+<body>
+    <h1>User Statistics</h1>
+    <h2>User Email: {{ user_email }}</h2>
+    <h3>Runs:</h3>
+    <ul>
+        {% for run in user_runs %}
+            <li>
+                Run ID: {{ run.id }}, WPM: {{ run.wpm }},
+                {% if run.plot %}
+                    <a href="{{ url_for('serve_plot', filename=run.plot) }}" target="_blank">View Plot</a>
+                {% else %}
+                    No plot available.
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
