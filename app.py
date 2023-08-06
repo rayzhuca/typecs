@@ -128,9 +128,10 @@ def page_login():
 
 @app.route("/logrun", methods=["POST"])
 def process_log():
-    timetable = request.get_json() # [t, {key: 'a', correct: True/False}]
+    timetable = request.get_json()
     wpm = analytics.get_wpm(timetable)
     print(wpm)
+    analytics.get_keyboard_plot(timetable)
     # user_insert_run() # UNCOMMMENT WHEN READY
     return "Success"
 

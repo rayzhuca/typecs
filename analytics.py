@@ -1,9 +1,14 @@
+import random
+import string
+import matplotlib
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 
+matplotlib.use('agg')
+
 import numpy as np
 
-def get_wpm(timetable):
+def get_wpm(timetable): # [t, {key: 'a', correct: True/False}]
     cps = [0] * 30 # characters per second
     for [t, stamp] in timetable:
         if stamp["correct"]:
@@ -25,25 +30,31 @@ key_space = 0.1
 row_space = 1.1
 for i, (row, offset) in enumerate(list(zip(keyboard_rows, keyboard_row_offsets))[::-1]):
     for k, keys in enumerate(row):
-        for key in keys:
-            keyboard_pos[key] = (offset + k*(1 + key_space) + 0.5, i*row_space)
-keyboard_c = np.linspace(0, 1, len(keyboard_pos))
+        keyboard_pos[keys] = (offset + k*(1 + key_space) + 0.5, i*row_space)
 
-def get_keyboard_plot(timetable):
+def get_keyboard_plot(timetable): # returns the filename of the image in temp/
+    incorrect_freq = {}
+    max_incorrect = 0
+    for [_, stamp] in timetable:
+        if not stamp["correct"]:
+            incorrect_freq.setdefault(stamp["key"], 0)
+            incorrect_freq[stamp["key"]] += 1
+            max_incorrect = max(max_incorrect, incorrect_freq[stamp["key"]])
     plt.style.use("seaborn-v0_8-ticks")
     fig, ax = plt.subplots()
     xs, ys = [], []
-    for x, y in keyboard_pos.values():
+    keyboard_c = []
+    for keys, (x, y) in keyboard_pos.items():
+        keyboard_c.append(256 * (incorrect_freq.get(keys[0], 0)+incorrect_freq.get(keys[1], 0)) / max_incorrect)
         xs.append(x)
         ys.append(y)
-    ax.scatter(xs, ys, marker='s', c=keyboard_c, cmap=cm.get_cmap("Pastel1"))
-    xy_offsets = {}
+    ax.scatter(xs, ys, marker='s', edgecolors='black', c=keyboard_c, cmap=cm.get_cmap("YlOrRd"))
     ax.set(ylim=(-2, 5.5))
-    for chars, xy in keyboard_pos.items():
-        if xy not in xy_offsets.keys():
-            xy_offsets[xy] = np.array([0.3, 0], 'float64')
-        ax.annotate(chars, xy=np.array(xy) + xy_offsets[xy])
-        xy_offsets[xy] += np.array([0, 0.3])
+    for keys, xy in keyboard_pos.items():
+        ax.annotate(keys[0], xy=np.array(xy) + np.array([0.3, 0]))
+        ax.annotate(keys[1], xy=np.array(xy) + np.array([0.3, 0.3]))
     plt.axis('off')
-    plt.show()
-    # plt.savefig("test.png", bbox_inches='tight')
+    filename = "keyboard-plot-" + ''.join(random.choices(string.ascii_uppercase + string.digits, k=10))
+    plt.savefig("temp/" + filename, dpi=300, bbox_inches='tight')
+    plt.close()
+    return filename
