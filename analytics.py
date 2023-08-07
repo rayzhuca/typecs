@@ -4,6 +4,10 @@ import matplotlib
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 
+from matplotlib.patches import Ellipse
+
+from sklearn.cluster import KMeans
+
 matplotlib.use('agg')
 
 import numpy as np
@@ -53,8 +57,17 @@ def get_keyboard_plot(timetable): # returns the filename of the image in temp/
     for keys, xy in keyboard_pos.items():
         ax.annotate(keys[0], xy=np.array(xy) + np.array([0.3, 0]))
         ax.annotate(keys[1], xy=np.array(xy) + np.array([0.3, 0.3]))
+    add_k_means_clustering(ax, zip(xs, ys))
     plt.axis('off')
     filename = "keyboard-plot-" + ''.join(random.choices(string.ascii_uppercase + string.digits, k=10))
     plt.savefig("temp/" + filename, dpi=300, bbox_inches='tight')
     plt.close()
     return filename
+
+def add_k_means_clustering(ax, data):
+    kmeans_model = KMeans(n_clusters=2, n_init="auto")
+    kmeans_model.fit_predict(np.array(list(data)))
+    centroids = kmeans_model.cluster_centers_
+    for centroid in centroids:
+        circle = Ellipse(xy=centroid, width=0.5 * 5, height=0.32 * 5, color='r', alpha = 0.3)
+        ax.add_patch(circle)
