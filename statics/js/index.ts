@@ -5,7 +5,7 @@ const languageSelect = <HTMLSelectElement>(
   document.getElementById("language-select")
 );
 
-const runDuration = 5;
+const runDuration = 30;
 let in_run: boolean = false;
 let run_time: number = runDuration;
 let docStr: string = "";
