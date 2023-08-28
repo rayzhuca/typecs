@@ -134,7 +134,6 @@ def page_register():
 def page_stats():
     user_email = session.get("email")
     user = user_get(user_email)
-    print(user.runs)
     return render_template("stats.html", user_email = user_email, user_runs = user.runs)
 
 @app.route("/plot/<filename>")
@@ -177,6 +176,7 @@ def page_logout():
     return redirect(url_for("page_index"))
 
 if __name__ == "__main__":
+    # Initializes database
     with app.app_context():
         db.create_all()
 
