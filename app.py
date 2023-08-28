@@ -159,7 +159,6 @@ def page_login():
 
     return render_template("login.html")
 
-
 @app.route("/logrun", methods=["POST"])
 def process_log():
     timetable = request.get_json() # [t, {key: 'a', correct: True/False}]
