@@ -8,6 +8,8 @@ report of your strengths and weaknesses.
 # Previews
 
 ### Home screen 
+The home screen is comprised of a simple UI, and has a functioning user login system.
+
 ![Home screen](https://i.imgur.com/l8zayrf.png)
 ### Statistics 
 
@@ -15,4 +17,4 @@ The statistics page shows a heat map of area in need of improvement.
 The intensity of the color indicates the most inaccurate keystrokes.
 To further isolate areas of development, the two red circles further groups 
 the weakest areas.
-![Statistics]((https://i.imgur.com/77DLn2G.png)https://i.imgur.com/77DLn2G.png)
+![Statistics](https://i.imgur.com/77DLn2G.png)
