@@ -13,10 +13,18 @@
         <nav>
             <ul>
                 <li><a href="/">Home</a></li>
-                <li><a href="/login">Login</a></li>
-                <li><a href="/register">Register</a></li>
+                {% if signed_in %}
+                    <li><a href="/logout">Logout</a></li>
+                    <li><a href="/stats">Statistics</a></li>
+                {% else %}
+                    <li><a href="/login">Login</a></li>
+                    <li><a href="/register">Register</a></li>
+                {% endif %}
             </ul>
         </nav>
+        {% if signed_in %}
+            <div>You are currently signed in.</div>
+        {% endif %}
     </header>
     <main>
         <div class="left" id="main-left">

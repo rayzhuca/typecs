@@ -1,7 +1,8 @@
-from flask import Flask, render_template, request, request, send_file
+from flask import Flask, render_template, request, send_file, redirect, url_for, session
 from flask_sqlalchemy import SQLAlchemy
-import analytics
+from flask_session import Session
 
+import analytics
 import os
 from dotenv import load_dotenv
 
@@ -16,9 +17,14 @@ app = Flask(
     template_folder="templates",
     static_folder="statics"
 )
+
 app.config["SQLALCHEMY_DATABASE_URI"] =  os.getenv("SQLALCHEMY_DATABASE_URI")
 db = SQLAlchemy(app)
 ph = PasswordHasher()
+
+app.config["SESSION_TYPE"] = "filesystem"
+app.secret_key = "abcdefgheijklmnop"
+Session(app)
 
 class User(db.Model):
     email = db.Column(db.String(100), primary_key=True)
@@ -30,6 +36,8 @@ class Run(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     order = db.Column(db.Integer)
     wpm = db.Column(db.ARRAY(db.Float))
+    plot = db.Column(db.String(256))
+
     user_id = db.Column(db.String(100), db.ForeignKey('user.email'))
 
 
@@ -38,13 +46,16 @@ def hash_password(password):
 
 def login(user, password):
     hash = user.password_hash
-    ph.verify(hash, password) # raises exception if wrong password!
+    try:
+        ph.verify(hash, password) 
+    except:
+        return False
+    
     if ph.check_needs_rehash(hash):
         user.password_hash = ph.hash(password)
     
     return True
 
-# return value = success 
 def user_create(name, email, password):
     if user_get(email):
         return False
@@ -54,6 +65,7 @@ def user_create(name, email, password):
         name=name,
         password_hash=hash_password(password),
     )
+
     db.session.add(user)
     db.session.commit()
     return True
@@ -61,32 +73,39 @@ def user_create(name, email, password):
 def user_get(email):
 
     user = User.query.filter_by(email=email).first()
-    if user:
-        return user
-    else:
-        return None
+    return user
 
 def user_delete(email):
     user = db.get_or_404(User, email)
     db.session.delete(user)
     db.session.commit()
 
-def user_insert_run(user, wpm):
-    for run in user.runs:
-        run.order += 1
-        if run.order > 10:
-            db.session.delete(run)
+def user_insert_run(user, wpm, plot):
+    signed_in = session.get("signed_in", False)
 
-    id = random.randint(-10**18, 10**18)
-    while db.get(Run, id):
-        id = random.randint(-10**18, 10**18)
-    db.session.add(Run(id, 1, wpm, user))
-    db.session.commit()
+    if signed_in:
+        for run in user.runs:
+            run.order += 1
+            if run.order > 10:
+                db.session.delete(run)
+
+        id = random.randint(-10**4, 10**4)
+        while Run.query.filter_by(id=id).first():
+            id = random.randint(-10**4, 10**4)
+
+        db.session.add(Run(id=id, order=1, wpm=wpm, user=user, plot=plot))
+        db.session.commit()
+
+        return True 
+
+    return False
 
 
 @app.route("/")
 def page_index():
-    return render_template("index.html")
+    signed_in = session.get("signed_in", False)
+
+    return render_template("index.html", signed_in = signed_in)
 
 @app.route("/doc")
 def get_doc():
@@ -111,6 +130,17 @@ def page_register():
 
     return render_template("registration.html")
 
+@app.route("/stats")
+def page_stats():
+    user_email = session.get("email")
+    user = user_get(user_email)
+    return render_template("stats.html", user_email = user_email, user_runs = user.runs)
+
+@app.route("/plot/<filename>")
+def serve_plot(filename):
+    return send_file(f"./temp/{filename}.png")
+
+
 @app.route("/login", methods=["GET", "POST"])
 def page_login():
     if request.method == "POST":
@@ -119,23 +149,34 @@ def page_login():
 
         user = user_get(email)
         if user and login(user, password):
-            return "Login successful!"
+            session["signed_in"] = True
+            session["email"] = email
+
+            return redirect(url_for("page_index"))
         else:
             return "Invalid email or password. Please try again."
 
     return render_template("login.html")
 
-
 @app.route("/logrun", methods=["POST"])
 def process_log():
-    timetable = request.get_json()
+    timetable = request.get_json() # [t, {key: 'a', correct: True/False}]
     wpm = analytics.get_wpm(timetable)
-    print(wpm)
-    analytics.get_keyboard_plot(timetable)
-    # user_insert_run() # UNCOMMMENT WHEN READY
+    # print(wpm)
+    plot = analytics.get_keyboard_plot(timetable)
+
+    user = user_get(session.get("email"))
+    user_insert_run(user, wpm, plot) # UNCOMMMENT WHEN READY
     return "Success"
 
+@app.route("/logout")
+def page_logout():
+    session.pop("signed_in", None)
+    session.pop("email", None)
+    return redirect(url_for("page_index"))
+
 if __name__ == "__main__":
+    # Initializes database
     with app.app_context():
         db.create_all()
 

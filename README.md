@@ -8,6 +8,11 @@ report of your strengths and weaknesses.
 # Previews
 
 ### Home screen 
-![Home screen](https://i.imgur.com/cWmnZ6J.png)
+![Home screen](https://i.imgur.com/vnhE4CO_d.webp)
 ### Statistics 
-![Statistics](https://i.imgur.com/yP8UArB.png)
+
+The statistics page shows a heat map of area in need of improvement.
+The intensity of the color indicates the most inaccurate keystrokes.
+To further isolate areas of development, the two red circles further groups 
+the weakest areas.
+![Statistics](https://i.imgur.com/msrjAnc_d.webp)
