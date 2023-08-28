@@ -7,7 +7,7 @@ report of your strengths and weaknesses.
 
 # Previews
 
-# Home screen 
+### Home screen 
 ![Home screen](https://i.imgur.com/cWmnZ6J.png)
-# Statistics 
+### Statistics 
 ![Statistics](https://i.imgur.com/yP8UArB.png)
