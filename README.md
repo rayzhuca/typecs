@@ -8,7 +8,7 @@ report of your strengths and weaknesses.
 # Previews
 
 ### Home screen 
-The home screen is comprised of a simple UI, and has a functioning user login system.
+The home screen is comprised of a simple UI and has a functioning user login system.
 
 ![Home screen](https://i.imgur.com/l8zayrf.png)
 ### Statistics 
