@@ -8,3 +8,7 @@ __pycache__/
 node_modules
 
 statics/js/index.js
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml
